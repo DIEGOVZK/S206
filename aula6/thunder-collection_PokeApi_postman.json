@@ -1,0 +1,140 @@
+{
+    "info": {
+        "_postman_id": "8e48f102-ef46-4d6e-9558-4c46716f84c7",
+        "name": "PokeApi",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "description": ""
+    },
+    "item": [
+        {
+            "name": "GET",
+            "item": [
+                {
+                    "name": "Localiza Pokemon",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "https://pokeapi.co/api/v2/pokemon/piplup",
+                            "path": [
+                                "api",
+                                "v2",
+                                "pokemon",
+                                "piplup"
+                            ],
+                            "protocol": "https",
+                            "host": [
+                                "pokeapi",
+                                "co"
+                            ]
+                        },
+                        "header": [
+                            {
+                                "key": "User-Agent",
+                                "value": "Thunder Client (https://www.thunderclient.com)",
+                                "disabled": true
+                            }
+                        ]
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 200', function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test('Response contains bubble', function () {",
+                                    "    var responseBody = pm.response.text();",
+                                    "    pm.expect(responseBody).to.include('bubble');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Não Localiza Pokemon",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "https://pokeapi.co/api/v2/pokemon/notexist",
+                            "path": [
+                                "api",
+                                "v2",
+                                "pokemon",
+                                "notexist"
+                            ],
+                            "protocol": "https",
+                            "host": [
+                                "pokeapi",
+                                "co"
+                            ]
+                        },
+                        "header": [
+                            {
+                                "key": "User-Agent",
+                                "value": "Thunder Client (https://www.thunderclient.com)",
+                                "disabled": true
+                            }
+                        ]
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 404', function () {",
+                                    "    pm.response.to.have.status(404);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Falha Endpoint",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "https://pokeapi.co/api/v2/poke/piplup",
+                            "path": [
+                                "api",
+                                "v2",
+                                "poke",
+                                "piplup"
+                            ],
+                            "protocol": "https",
+                            "host": [
+                                "pokeapi",
+                                "co"
+                            ]
+                        },
+                        "header": [
+                            {
+                                "key": "User-Agent",
+                                "value": "Thunder Client (https://www.thunderclient.com)",
+                                "disabled": true
+                            }
+                        ]
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 404', function () {",
+                                    "    pm.response.to.have.status(404);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
