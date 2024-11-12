@@ -1,0 +1,10 @@
+{
+  "name": "aula7",
+  "scripts": {
+    "newman:htmlextra": "newman run reqres.in.postman_collection.json -e reqres.parameters.postman_environment.json -r htmlextra"
+  },
+  "dependencies": {
+    "newman": "6.2.1",
+    "newman-reporter-htmlextra": "1.23.1"
+  }
+}
