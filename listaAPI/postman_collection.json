@@ -1,0 +1,416 @@
+{
+	"info": {
+		"_postman_id": "7abdbbe6-32da-411f-baae-1728a1373452",
+		"name": "open-meteo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39459764"
+	},
+	"item": [
+		{
+			"name": "format",
+			"item": [
+				{
+					"name": "historical temperature variation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response generation is less than 100us for 10 days worth of data\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.generationtime_ms).to.be.below(0.1);\r",
+									"});\r",
+									"\r",
+									"var schema = {\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"latitude\": { \"type\": \"number\" },\r",
+									"        \"longitude\": { \"type\": \"number\" },\r",
+									"        \"generationtime_ms\": { \"type\": \"number\" },\r",
+									"        \"utc_offset_seconds\": { \"type\": \"number\" },\r",
+									"        \"timezone\": { \"type\": \"string\" },\r",
+									"        \"timezone_abbreviation\": { \"type\": \"string\" },\r",
+									"        \"elevation\": { \"type\": \"number\" },\r",
+									"        \"hourly_units\": {\r",
+									"            \"type\": \"object\",\r",
+									"            \"properties\": {\r",
+									"                \"time\": { \"type\": \"string\" },\r",
+									"                \"temperature_2m\": { \"type\": \"string\" }\r",
+									"            },\r",
+									"            \"required\": [\"time\", \"temperature_2m\"]\r",
+									"        },\r",
+									"        \"hourly\": {\r",
+									"            \"type\": \"object\",\r",
+									"            \"properties\": {\r",
+									"                \"time\": {\r",
+									"                    \"type\": \"array\",\r",
+									"                    \"items\": { \"type\": \"string\" }\r",
+									"                },\r",
+									"                \"temperature_2m\": {\r",
+									"                    \"type\": \"array\",\r",
+									"                    \"items\": { \"type\": \"number\" }\r",
+									"                }\r",
+									"            },\r",
+									"            \"required\": [\"time\", \"temperature_2m\"]\r",
+									"        }\r",
+									"    },\r",
+									"    \"required\": [\"latitude\", \"longitude\", \"generationtime_ms\", \"utc_offset_seconds\", \"timezone\", \"timezone_abbreviation\", \"elevation\", \"hourly_units\", \"hourly\"]\r",
+									"};\r",
+									"\r",
+									"pm.test('Schema is valid for the 10 days of data with the given parameters', function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check date array start and end\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    var timeArray = jsonData.hourly.time;\r",
+									"\r",
+									"    var startDate = pm.variables.get(\"startDate\") + \"T00:00\";\r",
+									"    var endDate = pm.variables.get(\"endDate\") + \"T23:00\";\r",
+									"\r",
+									"    pm.expect(timeArray[0]).to.eql(startDate);\r",
+									"    pm.expect(timeArray[timeArray.length - 1]).to.eql(endDate);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{hbaseurl}}/archive?latitude={{srsgeolat}}&longitude={{srsgeolon}}&start_date={{startDate}}&end_date={{endDate}}&hourly=temperature_2m&timezone={{gmt-3}}",
+							"host": [
+								"{{hbaseurl}}"
+							],
+							"path": [
+								"archive"
+							],
+							"query": [
+								{
+									"key": "latitude",
+									"value": "{{srsgeolat}}"
+								},
+								{
+									"key": "longitude",
+									"value": "{{srsgeolon}}"
+								},
+								{
+									"key": "start_date",
+									"value": "{{startDate}}"
+								},
+								{
+									"key": "end_date",
+									"value": "{{endDate}}"
+								},
+								{
+									"key": "hourly",
+									"value": "temperature_2m"
+								},
+								{
+									"key": "timezone",
+									"value": "{{gmt-3}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "rain forecast",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response generation is less than 80us for 7 days worth of data\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.generationtime_ms).to.be.below(0.08);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check date array for 7 days worth of data in the future\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    var timeArray = jsonData.hourly.time;\r",
+									"\r",
+									"    var currentDate = new Date();\r",
+									"    var futureDate = new Date(currentDate);\r",
+									"    futureDate.setDate(currentDate.getDate() + 6);\r",
+									"    currentDate.setDate(currentDate.getDate());\r",
+									"\r",
+									"    var startDate = currentDate.toISOString().split('T')[0] + \"T00:00\";\r",
+									"    var endDate = futureDate.toISOString().split('T')[0] + \"T23:00\";\r",
+									"\r",
+									"    pm.expect(timeArray[0]).to.eql(startDate);\r",
+									"    pm.expect(timeArray[timeArray.length - 1]).to.eql(endDate);\r",
+									"\r",
+									"    pm.expect(timeArray.length).to.eql(168);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check precipitation probability range is within 0 and 100%\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    var precipitationProbabilityArray = jsonData.hourly.precipitation_probability;\r",
+									"\r",
+									"    precipitationProbabilityArray.forEach(function (probability) {\r",
+									"        pm.expect(probability).to.be.within(0, 100);\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}/forecast?latitude={{srsgeolat}}&longitude={{srsgeolon}}&hourly=precipitation_probability,rain,showers&timezone={{gmt-3}}",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"forecast"
+							],
+							"query": [
+								{
+									"key": "latitude",
+									"value": "{{srsgeolat}}"
+								},
+								{
+									"key": "longitude",
+									"value": "{{srsgeolon}}"
+								},
+								{
+									"key": "hourly",
+									"value": "precipitation_probability,rain,showers"
+								},
+								{
+									"key": "timezone",
+									"value": "{{gmt-3}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "snow formation in location",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response generation is less than 50us for 1 day worth of data\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.generationtime_ms).to.be.below(0.05);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"When this test regresses, RUN! (Check all snowfall and snow depth values are zeros)\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    var snowfallArray = jsonData.hourly.snowfall;\r",
+									"    var snowDepthArray = jsonData.hourly.snow_depth;\r",
+									"\r",
+									"    snowfallArray.forEach(function (value) {\r",
+									"        pm.expect(value).to.equal(0);\r",
+									"    });\r",
+									"\r",
+									"    snowDepthArray.forEach(function (value) {\r",
+									"        pm.expect(value).to.equal(0);\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}/forecast?latitude={{srsgeolat}}&longitude={{srsgeolon}}&hourly=snowfall,snow_depth&timezone={{gmt-3}}&forecast_days=1",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"forecast"
+							],
+							"query": [
+								{
+									"key": "latitude",
+									"value": "{{srsgeolat}}"
+								},
+								{
+									"key": "longitude",
+									"value": "{{srsgeolon}}"
+								},
+								{
+									"key": "hourly",
+									"value": "snowfall,snow_depth"
+								},
+								{
+									"key": "timezone",
+									"value": "{{gmt-3}}"
+								},
+								{
+									"key": "forecast_days",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Tests that verify if the API returns the expected data and in the correct format."
+		},
+		{
+			"name": "error",
+			"item": [
+				{
+					"name": "invalid location",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Error message informs about invalid latitude\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.error).to.be.true;\r",
+									"    pm.expect(jsonData.reason).to.eql(\"Longitude must be in range of -180 to 180°. Given: 200.0.\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}/forecast?latitude=0&longitude=200&hourly=rain",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"forecast"
+							],
+							"query": [
+								{
+									"key": "latitude",
+									"value": "0"
+								},
+								{
+									"key": "longitude",
+									"value": "200"
+								},
+								{
+									"key": "hourly",
+									"value": "rain"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "future date beyond limit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Error message informs about invalid forecast days, given more than 16 days\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.error).to.be.true;\r",
+									"    pm.expect(jsonData.reason).to.eql(\"Forecast days is invalid. Allowed range 0 to 16. Given 16.\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}/forecast?latitude={{srsgeolat}}&longitude={{srsgeolon}}&hourly=rain&forecast_days=30",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"forecast"
+							],
+							"query": [
+								{
+									"key": "latitude",
+									"value": "{{srsgeolat}}"
+								},
+								{
+									"key": "longitude",
+									"value": "{{srsgeolon}}"
+								},
+								{
+									"key": "hourly",
+									"value": "rain"
+								},
+								{
+									"key": "forecast_days",
+									"value": "30"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "startDate",
+			"value": "2024-11-01",
+			"type": "string"
+		},
+		{
+			"key": "endDate",
+			"value": "2024-11-10",
+			"type": "string"
+		},
+		{
+			"key": "gmt-3",
+			"value": "America%2FSao_Paulo",
+			"type": "string"
+		},
+		{
+			"key": "iterations",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

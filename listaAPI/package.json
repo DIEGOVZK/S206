@@ -1,0 +1,10 @@
+{
+  "name": "aula7",
+  "scripts": {
+    "newman:htmlextra": "newman run postman_collection.json -e postman_environment.json --reporters=cli,htmlextra --reporter-htmlextra-export \"newman/report.html\""
+  },
+  "dependencies": {
+    "newman": "6.2.1",
+    "newman-reporter-htmlextra": "1.23.1"
+  }
+}
