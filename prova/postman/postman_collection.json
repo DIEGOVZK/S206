@@ -1,0 +1,419 @@
+{
+	"info": {
+		"_postman_id": "e5d5529b-417c-49d6-9a03-d264253692a3",
+		"name": "REST Public API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39459764"
+	},
+	"item": [
+		{
+			"name": "Symbols",
+			"item": [
+				{
+					"name": "List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}/v1/symbols",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"v1",
+								"symbols"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response body is valid JSON\", function () {\r",
+									"    pm.response.to.be.json;\r",
+									"    const schema = {\r",
+									"        \"type\": \"object\",\r",
+									"        \"properties\": {\r",
+									"            \"symbol\": { \"type\": \"string\" },\r",
+									"            \"base_currency\": { \"type\": \"string\" },\r",
+									"            \"quote_currency\": { \"type\": \"string\" },\r",
+									"            \"tick_size\": { \"type\": \"number\" },\r",
+									"            \"quote_increment\": { \"type\": \"number\" },\r",
+									"            \"min_order_size\": { \"type\": \"string\" },\r",
+									"            \"status\": { \"type\": \"string\" },\r",
+									"            \"wrap_enabled\": { \"type\": \"boolean\" },\r",
+									"            \"product_type\": { \"type\": \"string\" },\r",
+									"            \"contract_type\": { \"type\": \"string\" },\r",
+									"            \"contract_price_currency\": { \"type\": \"string\" }\r",
+									"        },\r",
+									"        \"required\": [\"symbol\", \"base_currency\", \"quote_currency\", \"tick_size\", \"quote_increment\", \"min_order_size\", \"status\", \"wrap_enabled\", \"product_type\", \"contract_type\", \"contract_price_currency\"]\r",
+									"    };\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Symbol is LINKBTC\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.symbol).to.eql(\"LINKBTC\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Base currency is LINK\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.base_currency).to.eql(\"LINK\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Quote currency is BTC\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.quote_currency).to.eql(\"BTC\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Tick size is correct\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.tick_size).to.eql(0.000001);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Quote increment is correct\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.quote_increment).to.eql(1E-8);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Minimum order size is correct\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.min_order_size).to.eql(\"0.1\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status is limit_only\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.status).to.eql(\"limit_only\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Wrap enabled is false\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.wrap_enabled).to.be.false;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Product type is spot\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.product_type).to.eql(\"spot\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Contract type is vanilla\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.contract_type).to.eql(\"vanilla\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Contract price currency is BTC\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.contract_price_currency).to.eql(\"BTC\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}/v1/symbols/details/:symbol",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"v1",
+								"symbols",
+								"details",
+								":symbol"
+							],
+							"variable": [
+								{
+									"key": "symbol",
+									"value": "linkbtc",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Data",
+			"item": [
+				{
+					"name": "Ticker data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response body is valid JSON\", function () {\r",
+									"    pm.response.to.be.json;\r",
+									"    const schema = {\r",
+									"        \"type\": \"object\",\r",
+									"        \"properties\": {\r",
+									"            \"symbol\": { \"type\": \"string\" },\r",
+									"            \"open\": { \"type\": \"string\" },\r",
+									"            \"high\": { \"type\": \"string\" },\r",
+									"            \"low\": { \"type\": \"string\" },\r",
+									"            \"close\": { \"type\": \"string\" },\r",
+									"            \"changes\": {\r",
+									"                \"type\": \"array\",\r",
+									"                \"items\": { \"type\": \"string\" }\r",
+									"            },\r",
+									"            \"bid\": { \"type\": \"string\" },\r",
+									"            \"ask\": { \"type\": \"string\" }\r",
+									"        },\r",
+									"        \"required\": [\"symbol\", \"open\", \"high\", \"low\", \"close\", \"changes\", \"bid\", \"ask\"]\r",
+									"    };\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Symbol is LINKBTC\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.symbol).to.eql(\"LINKBTC\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"All numeric fields are valid numbers\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const numericFields = [\"open\", \"high\", \"low\", \"close\", \"bid\", \"ask\"];\r",
+									"    numericFields.forEach(field => {\r",
+									"        pm.expect(jsonData[field]).to.match(/^\\d+(\\.\\d+)?$/);\r",
+									"    });\r",
+									"    jsonData.changes.forEach(change => {\r",
+									"        pm.expect(change).to.match(/^\\d+(\\.\\d+)?$/);\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}/v2/ticker/:symbol",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"v2",
+								"ticker",
+								":symbol"
+							],
+							"variable": [
+								{
+									"key": "symbol",
+									"value": "linkbtc",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "History",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response body is valid JSON\", function () {\r",
+									"    pm.response.to.be.json;\r",
+									"    const schema = {\r",
+									"        \"type\": \"array\",\r",
+									"        \"items\": {\r",
+									"            \"type\": \"object\",\r",
+									"            \"properties\": {\r",
+									"                \"timestamp\": { \"type\": \"number\" },\r",
+									"                \"timestampms\": { \"type\": \"number\" },\r",
+									"                \"tid\": { \"type\": \"number\" },\r",
+									"                \"price\": { \"type\": \"string\" },\r",
+									"                \"amount\": { \"type\": \"string\" },\r",
+									"                \"exchange\": { \"type\": \"string\" },\r",
+									"                \"type\": { \"type\": \"string\" }\r",
+									"            },\r",
+									"            \"required\": [\"timestamp\", \"timestampms\", \"tid\", \"price\", \"amount\", \"exchange\", \"type\"]\r",
+									"        }\r",
+									"    };\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"All numeric fields are valid numbers\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    jsonData.forEach(item => {\r",
+									"        pm.expect(item.timestamp).to.be.a('number');\r",
+									"        pm.expect(item.timestampms).to.be.a('number');\r",
+									"        pm.expect(item.tid).to.be.a('number');\r",
+									"        pm.expect(item.price).to.match(/^\\d+(\\.\\d+)?$/);\r",
+									"        pm.expect(item.amount).to.match(/^\\d+(\\.\\d+)?$/);\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Exchange is gemini\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    jsonData.forEach(item => {\r",
+									"        pm.expect(item.exchange).to.eql(\"gemini\");\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Type is sell\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    jsonData.forEach(item => {\r",
+									"        pm.expect(item.type).to.eql(\"sell\");\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}/v1/trades/:symbol?limit_trades=1",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"v1",
+								"trades",
+								":symbol"
+							],
+							"query": [
+								{
+									"key": "limit_trades",
+									"value": "1"
+								}
+							],
+							"variable": [
+								{
+									"key": "symbol",
+									"value": "linkbtc",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "no adding to History",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response body is valid JSON\", function () {\r",
+									"    pm.response.to.be.json;\r",
+									"    const schema = {\r",
+									"        \"type\": \"object\",\r",
+									"        \"properties\": {\r",
+									"            \"error\": { \"type\": \"string\" }\r",
+									"        },\r",
+									"        \"required\": [\"error\"]\r",
+									"    };\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Error message is 'resource not found'\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.error).to.eql(\"resource not found\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[{\"timestamp\":1732583209,\"timestampms\":1732583209543,\"tid\":2840140869966543,\"price\":\"0.00018375\",\"amount\":\"0.597266\",\"exchange\":\"gemini\",\"type\":\"sell\"}]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}/v1/trades/:symbol",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"v1",
+								"trades",
+								":symbol"
+							],
+							"variable": [
+								{
+									"key": "symbol",
+									"value": "linkbtc",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseurl",
+			"value": "https://api.gemini.com",
+			"type": "string"
+		}
+	]
+}
